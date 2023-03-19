@@ -17,8 +17,7 @@ export const getCapy = async () => {
   mesh.receiveShadow = true;
 
   const capybara = new THREE.Mesh(mesh.geometry, material);
-  capybara.rotation.x = -Math.PI / 2;
-  capybara.position.setY(2);
+  capybara.rotateX(-Math.PI / 2);
 
   capybara.castShadow = true;
   capybara.receiveShadow = true;

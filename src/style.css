@@ -5,5 +5,32 @@
 @layer base {
   html, body, #app {
     @apply w-full h-full;
+    @apply overflow-x-hidden;
+  }
+}
+
+@layer utilities {
+  .stroke {
+    -webkit-text-fill-color: transparent; /* Will override color (regardless of order) */
+    -webkit-text-stroke-width: 0.5rem;
+    -webkit-text-stroke-color: white;
+  }
+
+  .flex-center {
+    @apply flex;
+    @apply justify-center items-center;
+  }
+}
+
+@layer components {
+  .base-text {
+    @apply font-bold;
+    @apply text-6xl md:text-9xl lg:text-15xl;
+  }
+
+  .behind-text {
+    @apply opacity-10 whitespace-nowrap;
+    @apply font-bold lg:font-extrabold;
+    @apply text-9xl md:text-15xl lg:text-30xl;
   }
 }
