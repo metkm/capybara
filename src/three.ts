@@ -2,28 +2,34 @@ import * as THREE from "three";
 import { Mesh, PerspectiveCamera } from "three";
 import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
 
-export const getCapy = async () => {
-  const fbxLoader = new FBXLoader();
-  const textureLoader = new THREE.TextureLoader();
+const fbxLoader = new FBXLoader();
+const textureLoader = new THREE.TextureLoader();
 
+export const getCapy = async () => {
   const texture = await textureLoader.loadAsync("./src/assets/capy_material.png");
   const group = await fbxLoader.loadAsync("./src/assets/capybara.FBX");
 
   let material = new THREE.MeshStandardMaterial({ map: texture });
-  material.flatShading = true;
   let mesh = group.children[0] as Mesh;
 
-  mesh.castShadow = true;
-  mesh.receiveShadow = true;
-
   const capybara = new THREE.Mesh(mesh.geometry, material);
-  capybara.rotateX(-Math.PI / 2);
-  capybara.rotateZ(-Math.PI / 8);
-
-  capybara.castShadow = true;
-  capybara.receiveShadow = true;
+  capybara.rotation.x = -Math.PI / 2;
 
   return capybara;
+}
+
+export const getOrange = async () => {
+  const texture = await textureLoader.loadAsync("./src/assets/orange_material.png");
+  const group = await fbxLoader.loadAsync("./src/assets/orange.FBX");
+
+  let material = new THREE.MeshStandardMaterial({ map: texture });
+  let mesh = group.children[0] as Mesh;
+
+  const orange = new THREE.Mesh(mesh.geometry, material);
+  orange.geometry.scale(0.02, 0.02, 0.02);
+  orange.position.y = 1.3;
+  orange.position.x = -1;
+  return orange
 }
 
 export const getRenderer = (canvas: HTMLCanvasElement, camera: PerspectiveCamera) => {

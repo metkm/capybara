@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import { getCamera, getCapy, getRenderer } from "./three";
+import { getCamera, getCapy, getOrange, getRenderer } from "./three";
 import * as THREE from "three";
 import Content from "./components/Content.vue";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
 import { lerp, scalePercent } from "./utils";
 
@@ -17,14 +18,22 @@ onMounted(async () => {
   const renderer = getRenderer(canvasElement.value, camera);
 
   const capybara = await getCapy();
-  scene.add(capybara);
+  const orange = await getOrange();
+  const capyandorange = new THREE.Group();
+  capyandorange.add(capybara);
+  capyandorange.add(orange);
+
+  scene.add(capyandorange)
 
   const light = new THREE.DirectionalLight("#ffffff", 1);
   light.position.x = -20;
   light.lookAt(0, 0, 0);
   scene.add(light);
+
+  const orbitControls = new OrbitControls(camera, canvasElement.value);
   
   const update = () => {
+    orbitControls.update();
     renderer.render(scene, camera);
     requestAnimationFrame(update);
   }
@@ -33,23 +42,20 @@ onMounted(async () => {
     if (!contentElement.value) return;
 
     let top = contentElement.value.scrollTop;
+    let pageHeight = contentElement.value.clientHeight;
 
     // first page.
-    if (top <= 961) {
-      let scaledScroll = scalePercent(top, 0, 961);
+    if (top <= pageHeight) {
+      let scaledScroll = scalePercent(top, 0, pageHeight);
 
-      let positionx = lerp(-0, -15, scaledScroll);
-      let rotationz = lerp(Math.PI * 1.9, Math.PI * 1.7, scaledScroll);
-      let positionz = lerp(0, 1.5, scaledScroll);
-      capybara.position.x = positionx;
-      capybara.rotation.z = rotationz;
-      capybara.position.z = positionz;
-    } else if (top >= 961) {
-      let scaledScroll = scalePercent(top, 961, 961 * 2);
-      capybara.rotation.z = lerp(Math.PI * 1.7, Math.PI * 1.2, scalePercent(top, 961, 961 * 2));
-      capybara.position.z = lerp(1.5, -1.5, scaledScroll);
-    } else if (top >= 961 * 2) {
-      // capybara.rotation.z = lerp(-Math.PI * 2, Math.PI, scalePercent(top, 961 * 2, 961 * 3));
+      capyandorange.position.x = lerp(-0, -15, scaledScroll);
+      capyandorange.position.z = lerp(0, 1.5, scaledScroll);
+      capyandorange.rotation.y = lerp(-Math.PI * 2.2, -Math.PI * 2.1, scaledScroll);
+    } else if (top >= pageHeight) {
+      let scaledScroll = scalePercent(top, pageHeight, pageHeight * 2);
+      capyandorange.position.z = lerp(1.5, -1.5, scaledScroll);
+      capyandorange.rotation.y = lerp(-Math.PI * 2.1, -Math.PI * 2.8, scaledScroll);
+    } else if (top >= pageHeight * 2) {
     }
   }
 
