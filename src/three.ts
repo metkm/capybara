@@ -6,8 +6,8 @@ const fbxLoader = new FBXLoader();
 const textureLoader = new THREE.TextureLoader();
 
 export const getCapy = async () => {
-  const texture = await textureLoader.loadAsync("./src/assets/capy_material.png");
-  const group = await fbxLoader.loadAsync("./src/assets/capybara.FBX");
+  const texture = await textureLoader.loadAsync("/capy_material.png");
+  const group = await fbxLoader.loadAsync("/capybara.FBX");
 
   let material = new THREE.MeshStandardMaterial({ map: texture });
   let mesh = group.children[0] as Mesh;
@@ -19,8 +19,8 @@ export const getCapy = async () => {
 }
 
 export const getOrange = async () => {
-  const texture = await textureLoader.loadAsync("./src/assets/orange_material.png");
-  const group = await fbxLoader.loadAsync("./src/assets/orange.FBX");
+  const texture = await textureLoader.loadAsync("/orange_material.png");
+  const group = await fbxLoader.loadAsync("/orange.FBX");
 
   let material = new THREE.MeshStandardMaterial({ map: texture });
   let mesh = group.children[0] as Mesh;
