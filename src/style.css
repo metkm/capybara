@@ -4,8 +4,13 @@
 
 @layer base {
   html, body, #app {
-    @apply w-full h-full;
+    @apply w-full h-full text-white;
     @apply overflow-x-hidden;
+  }
+
+  section {
+    @apply h-screen relative;
+    @apply snap-start;
   }
 }
 
@@ -16,8 +21,9 @@
     -webkit-text-stroke-color: white;
   }
 
-  .flex-center {
-    @apply flex;
+  .big-text {
+    @apply absolute inset-0;
+    @apply flex overflow-x-hidden;
     @apply justify-center items-center;
   }
 }

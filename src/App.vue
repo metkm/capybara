@@ -3,13 +3,13 @@ import { onMounted, ref } from "vue";
 import { resizeHandler } from "./utils";
 import { getCapy } from "./capybara";
 import * as THREE from "three";
-import { onScrollAnimation } from "./animation";
+import Content from "./components/Content.vue";
 
 const canvasElement = ref<HTMLCanvasElement | null>();
-document.addEventListener("scroll", onScrollAnimation);
+const contentElement = ref<HTMLElement| null>();
 
 onMounted(async () => {
-  if (!canvasElement.value) return;
+  if (!canvasElement.value || !contentElement.value) return;
 
   const scene = new THREE.Scene();
 
@@ -28,20 +28,25 @@ onMounted(async () => {
   
   resizeHandler(renderer, camera);
   const update = () => {
-    capybara.rotation.z += 0.01;
-
     renderer.render(scene, camera);
     requestAnimationFrame(update);
   }
+
+  contentElement.value.addEventListener("scroll", () => {
+    let top = contentElement.value!.scrollTop;
+    
+    capybara.position.x = top * -0.014;
+    capybara.rotation.z = top * -0.0005;
+    camera.position.z = top * -0.002;
+  })
 
   update();
 })
 </script>
 
 <template>
-  <canvas ref="canvasElement" class="fixed top-0 left-0"></canvas>
-  <div class="absolute inset-0 grid place-content-center -z-10 bg-[#002BFB] text-white">
-    <p class="base-text animate-fadein">CAPY BARA</p>
-    <p class="absolute inset-0 stroke behind-text flex-center">カピバラ</p>
+  <canvas ref="canvasElement" class="fixed top-0 left-0 z-10 pointer-events-none"></canvas>
+  <div ref="contentElement" class="snap-y snap-mandatory h-screen overflow-y-auto absolute inset-x-0">
+    <Content />
   </div>
 </template>
