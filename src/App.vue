@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import { resizeHandler } from "./utils";
-import { getCapy } from "./capybara";
+import { getCamera, getCapy, getRenderer } from "./three";
 import * as THREE from "three";
 import Content from "./components/Content.vue";
 
@@ -12,12 +11,8 @@ onMounted(async () => {
   if (!canvasElement.value || !contentElement.value) return;
 
   const scene = new THREE.Scene();
-
-  const renderer = new THREE.WebGLRenderer({ canvas: canvasElement.value, alpha: true });
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight);
-  camera.position.x = -20;
-  camera.lookAt(0, 0, 0);
+  const camera = getCamera();
+  const renderer = getRenderer(canvasElement.value, camera);
 
   const capybara = await getCapy();
   scene.add(capybara);
@@ -26,7 +21,6 @@ onMounted(async () => {
   light.position.set(0, 10, 10);
   scene.add(light);
   
-  resizeHandler(renderer, camera);
   const update = () => {
     renderer.render(scene, camera);
     requestAnimationFrame(update);
