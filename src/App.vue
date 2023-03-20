@@ -4,6 +4,8 @@ import { getCamera, getCapy, getRenderer } from "./three";
 import * as THREE from "three";
 import Content from "./components/Content.vue";
 
+import { lerp, scalePercent } from "./utils";
+
 const canvasElement = ref<HTMLCanvasElement | null>();
 const contentElement = ref<HTMLElement| null>();
 
@@ -18,7 +20,8 @@ onMounted(async () => {
   scene.add(capybara);
 
   const light = new THREE.DirectionalLight("#ffffff", 1);
-  light.position.set(0, 10, 10);
+  light.position.x = -20;
+  light.lookAt(0, 0, 0);
   scene.add(light);
   
   const update = () => {
@@ -26,14 +29,32 @@ onMounted(async () => {
     requestAnimationFrame(update);
   }
 
-  contentElement.value.addEventListener("scroll", () => {
-    let top = contentElement.value!.scrollTop;
-    
-    capybara.position.x = top * -0.014;
-    capybara.rotation.z = top * -0.0005;
-    camera.position.z = top * -0.002;
-  })
+  const handleScroll = () => {
+    if (!contentElement.value) return;
 
+    let top = contentElement.value.scrollTop;
+
+    // first page.
+    if (top <= 961) {
+      let scaledScroll = scalePercent(top, 0, 961);
+
+      let positionx = lerp(-0, -15, scaledScroll);
+      let rotationz = lerp(Math.PI * 1.9, Math.PI * 1.7, scaledScroll);
+      let positionz = lerp(0, 1.5, scaledScroll);
+      capybara.position.x = positionx;
+      capybara.rotation.z = rotationz;
+      capybara.position.z = positionz;
+    } else if (top >= 961) {
+      let scaledScroll = scalePercent(top, 961, 961 * 2);
+      capybara.rotation.z = lerp(Math.PI * 1.7, Math.PI * 1.2, scalePercent(top, 961, 961 * 2));
+      capybara.position.z = lerp(1.5, -1.5, scaledScroll);
+    } else if (top >= 961 * 2) {
+      // capybara.rotation.z = lerp(-Math.PI * 2, Math.PI, scalePercent(top, 961 * 2, 961 * 3));
+    }
+  }
+
+  contentElement.value.addEventListener("scroll", handleScroll);
+  handleScroll();
   update();
 })
 </script>
